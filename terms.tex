@@ -1,0 +1,34 @@
+\section{Terms}
+\label{sec:terms}
+In order to better understand the content of this document, in this
+section is presented a little summary of the terms that will be used from now on together with
+their explanations.
+
+\begin{itemize}
+  \item Formula: in first-order logic a formula can be thought as a sequence of symbols
+    (i.e., variables and connectives) for which it makes sense to ask, under a certain
+    interpretation -- i.e., substituting free variables with real values --, ``is it true?''
+  \item Fact: a fact is a ground atomic formula.  A formula is said to be atomic when
+    it does not contain any logical connectives (e.g., a predicate symbol together with its arguments).
+    A ground atomic formula is an atomic formula which does not contain
+    any free variables. For example, the fact ``Ada is John's mother'' can be formally expressed
+    by: $mother(Ada, John)$. In this case $mother$ is a predicate and Ada and John are its two
+    arguments.
+  \item Rule: Expression that becomes true if the premise expression is true.
+  \item Rulebase: collection of fact and rules.
+  \item Horn clause: expression of the form $B \leftarrow B_1,B_2,...,B_k$ where $k \in \mathbb{I}$ and
+    B and each $B_i$ is atomic.
+  \item Embedded implication: expression of the form $B \leftarrow \phi_1,\phi_2,...,\phi_k$
+    where $k \in \mathbb{I}$, B is atomic and each $\phi_i$ is a Horn clause.
+    Note that embedded implications include Horn clauses as a special case, and Horn
+    clauses include atomic formulas as a special case.
+  \item Logic Semantic: study of the meaning of a formal logic. That is to say the study
+    of the meaning of the logical connectives, how formulas can be combined to infer new formulas,
+    how formulas are constructed and how they are related.
+    Logic semantic may be studied relying on different approaches. One of the most
+    used relies on mathematical models (Model-theoretic semantics).
+  \item Logic syntax: rules that regulate how the symbols allowed in a certain type
+    of formal logic are combined.
+  \item Logic Programming:  programming paradigm based on formal logic.
+  \item Prolog: a declarative logic programming language.
+\end{itemize}

@@ -1,0 +1,202 @@
+\section{Intuitionistic Logic Programming}
+\label{sec:ilp}
+One of the best definitions about logic programming can be found on Wikipedia:
+``Logic programming is a type of programming paradigm which is based on formal logic.
+A program written in a logic programming language merely is a set of sentences in
+logical form, expressing facts and rules about some problem domain''.
+
+Intuitionistic Programming Language means that the program is written using
+intuitionistic semantic and syntax. As often happens, only a fragment of
+the considered logic is implemented, not the entire and complete logic.
+For example, Prolog doesn't allow disjunctive facts or conclusions, as obviously
+classical logic does. The choice to use only a frame of the considered logic is usually made
+to make the employed interpreter more efficient. An example of an interpreter for
+intuitionistic logic programming is shown in Section~\ref{sec:apifhr}.
+
+The easiest way to implement hypothetical reasoning is to temporarily modify the rule
+base, try to infer the query and eventually restore the rulebase to the original content.
+
+Let's consider again the example in Section~\ref{sec:formalization}. In order
+to give a response to the query we need to temporarily introduce the rule
+$worked\_on(Phil, Icarus)$ within the rulebase R, try to infer $wall\_of\_fame(Phil)$
+and eventually remove the rule for the rulebase.
+
+This is exactly how hypothetical queries are validated in intuitionistic logic
+programming.
+
+\section{A Prolog Interpreter for Hypothetical Reasoning}
+\label{sec:apifhr}
+We said in Section~\ref{sec:alfhr}, that hypothetical reasoning has a intuitionistic semantic.
+Therefore what we need merely is an intuitionistic interpreter.
+
+The implementation of a Prolog interpreter for intuitionistic logic,
+has been studied by L. Thorne McCarty and Leon A. Shklar in~\cite{McCartyS94}.
+
+This work presents a ``syntactically restricted language'' (as they call it), which basically
+is a language which implements ``part'' of the intuitionistic logic.
+As they demonstrated in their work, this ``syntactically restricted language'' is
+expressively equivalent to the full language, though.
+
+Particularly, they decomposed intuitionistic logic into two restricted subsets:
+\begin{itemize}
+  \item the class of embedded implications: that is to say a class of formulas as
+    \begin{equation}
+      B(x) \leftarrow A_1(x) \wedge A_2(x) \wedge ... \wedge A_n(x),\ n \in \mathbb{I}
+    \end{equation}
+    where B(x) is an atomic formula and each $A_i(x)$ is either an atomic formula
+    or another embedded implication with (zero or more) embedded universal quantifiers
+    (i.e., $\forall$). Note that here L. Thorne McCarty and Leon A. Shklar relaxed
+    a little bit the definition of embedded implication. In fact, differently from
+    what has been said in Section~\ref{sec:terms}, here embedded implications allow
+    other embedded implications in their body. Note that this definition is more 
+    general. In fact, as said in Section~\ref{sec:terms}, embedded implications
+    include Horn clauses as special case.
+
+  \item the class of disjunctive and existential assertions: that is to say a class
+    of formulas like:
+    \begin{equation}
+      B(x) \rightarrow \wedge^{n}_{i=1} Q_i(x)\ and\ B(x) \rightarrow (\exists y) \wedge^m_{j=1}Q_j(x;y)
+    \end{equation}
+    Where the x variables are universally quantified and no x variables are allowed
+    on the right-hand side which do not appear in B(x). Each Q is an atomic formula.
+\end{itemize}
+
+Using these two classes, the following implication rules are defined by McCarty
+and Shklar:
+\begin{enumerate}[I)]
+  \item $R \vdash A$
+    \begin{equation}
+      \begin{split}
+        &if\ there\ is\ a\ rule\ B(x) \leftarrow \wedge^{n}_{i=1} A_i(x)\ in\ R\ and\ a\ ground\ substitution\ \theta\ for\ x:\\
+        &A=B(x)\theta\ and\ R \vdash A_i(x)\theta,\ for\ i = 1...n
+      \end{split}
+    \end{equation}
+
+    \item $R \vdash A \leftarrow \wedge^{n}_{i=1} Q_i(x)$
+      \begin{equation}
+        if\ R \cup^n_{i=1}\{Q_i(x)\} \vdash A
+      \end{equation}
+
+    \item $R \vdash (\forall y) A(y)$
+      \begin{equation}
+      \begin{split}
+        &if\ R \vdash A(c)\ for\ some\ tuple\ of\ constants\ c=\langle c_1,c_2,...,c_k\rangle\ that\\
+        &do\ not\ appear\ in\ R\ or A(y)
+      \end{split}
+    \end{equation}
+
+    \item $R \vdash A$
+      \begin{equation}
+      \begin{split}
+        &if\ there\ is\ a\ rule\ B(x) \rightarrow \vee^n_{i=1}Q_i(x)\ in\ R\ and\ a\ ground\ substitution\ \theta\ for x:\\
+        &R \vdash B(x)\theta\ and\ R \cup \{Q_i(x)\theta\}\vdash A,\ for\ i=1,...,n
+      \end{split}
+    \end{equation}
+
+    \item $R \vdash A$
+      \begin{equation}
+      \begin{split}
+        &if\ there\ is\ a\ rule\ B(x) \rightarrow (\exists y)\wedge^m_{j=1}Q_j(x;y)\ in\ R\ and\ a\ ground\ substitution\ \theta\ \\
+        &for\ x\ such\ that\ R\ \vdash B(x)\theta\ and:\\
+        &R \cup (\cup^m_{j=1}\{Q_j(x;c)\theta\})\vdash A for\ some\ tuple\ of\ constants\ c\ \langle c_1,c_2,...,c_k \rangle\ that\ \ do\\
+        &not\ appear\ in\ R\ or\ A
+      \end{split}
+    \end{equation}
+\end{enumerate}
+
+Note that these rules are not different from those presented in Section~\ref{sec:rfhi}
+(the logic is the same after all). They have been just rewritten using the two classes
+or rules that McCarty and Shklar defined.
+
+The interpreter is conceptually divided in two different parts, one for each class of
+rules: embedded implications and disjunctive and existential assertions.
+
+In order to understand the next section a little knowledge of Prolog is required.
+Most of the concepts will be explained anyway. For a good overview of Prolog
+please refer to~\cite{Prolog1},~\cite{Prolog2} and~\cite{Prolog3}.
+
+\subsection{Embedded Implications Interpreter}
+\label{sec:eii}
+
+The interpreter for embedded implications is reported in the listing below.
+
+\begin{lstlisting}
+  prove1(true,_,_,_) :- !.
+  prove1((G1,G2),HypDB,Vars,N) :- !,prove1(G1,HypDB,Vars,N),
+      prove1(G2,HypDB,Vars,N).
+  prove1((Goal:-Hyp),HypDB,Vars,N) :-
+      append(Hyp,HypDB,NewHypDB),N1 is N+1,
+      add_variables((Goal:-Hyp),N,Vars,Vars1),
+      !,prove1(Goal,NewHypDB,Vars1,N1).
+  prove1(forall(Ys,(Goal:-Hyp)),HypDB,Vars,N) :-
+      append(Hyp,HypDB,NewHypDB),N1 is N+1,
+      generate_constants(Ys,N1),
+      add_variables((Goal:-Hyp),N,Vars,Vars1),
+      !,prove1(Goal,NewHypDB,Vars1,N1).
+  prove1(Goal,HypDB,Vars,_) :- member(Goal,HypDB),\+violation(Vars).
+  prove1(Goal,HypDB,Vars,N) :- clause(Goal,Body),\+violation(Vars),
+  prove1(Body,HypDB,Vars,N).
+\end{lstlisting}
+
+The interpreter is not so easy as one may hope. In this document a simple
+intuitive explanation will be given.
+
+The first clause is trivial: if the premise of the embedded implication is equal to True,
+the rule is satisfied. The second clause succeeds if the conjunction of the two embedded implications
+G1 and G2 is proved. The third clause works as follow: to check if ``Goal''
+follows from $Hyp$, $Goal$ is appended to the current $HypDB$ and it will be tried to
+prove that $Goal$ follows from $NewHypDB$. Such a test is implemented by the
+fifth clause. The fourth clause follows the
+same approach but handles embedded implications containing universal quantifiers
+(i.e., $\forall$). For a detailed overview of this clause, please refer to~\cite{McCartyS94}.
+Finally the sixth and last clause is trivial as well: to prove that a goal follows
+from a set of hypothetical rules (i.e., $HypDB$) it has to be proved its body. Note
+that the fact that $Body$ is the actual body of $Goal$ is true if the
+predicate $clause(Body,\ Goal)$ is true as well.
+
+
+\subsection{Disjunctive Assertion Interpreter}
+\label{sec:dai}
+The interpreter for disjunctive assertions is reported in the listing below.
+
+\begin{lstlisting}
+  prove2([Ans/Split<-[]],DB,Suspend,Stack) :-
+      (dsplit(DB,Split,Suspend,Stack);!,extend(DB,Suspend,Stack)).
+  prove2([Ans/Cases<-[],Frame|Pnode],DB,Suspend,Stack) :-
+      copy_term(Frame,A/OldCases<-[Call|Goals]), Call=Ans,
+      append(OldCases,Cases,NewCases),
+      !,prove2([A/NewCases<-Goals|Pnode],DB,Suspend,Stack).
+  prove2(Node,DB,Suspend,Stack) :- Node = [_<-[Goal|_]|_],
+      findall(Goal/[]<-[],db(Goal,DB),Fr1),
+      findall(Goal/[]<-Body,rule(Goal,Body),Fr2),
+      findall(Goal/Cases<-Body,drule(Goal,Cases,Body),Fr3),
+      append(Fr2,Fr3,Fr),append(Fr1,Fr,Frames),
+      suspend(Goal,Node,Suspend,NewSuspend),
+      !,extend(DB,NewSuspend,[branch(Frames,Node)|Stack]).
+  dsplit(DB,[],Suspend,Stack) :- !.
+  dsplit(DB,[A|Split],Suspend,Stack) :-
+      suspensions(A,Suspend,NewSuspend,Branches),
+      append(Branches,Stack,NewStack),
+      !,extend([A|DB],NewSuspend,NewStack),
+      dsplit(DB,Split,Suspend,Stack).
+\end{lstlisting}
+
+Since the use of disjunctive assertions, the approach followed here is to ``restart'' the
+proof procedure several times (as many as the number or disjunctive assertions).
+
+The approach followed by this interpreter is well explained in the work~\cite{McCartyS94}.
+
+``Backtracking information (i.e., ``how to restart a proof'') is maintained explicitly in the variable Stack.
+Stack is a list of branches in the form $branch(Frames,Node)$, where Frames and Node are both
+lists of frames. A frame has the form $Ans \leftarrow Goals$, where Ans is an atom and Goals is a list of
+atoms. A call to findall collects a list of frames whose Ans atom
+would unify with the first goal -- the calling goal -- in the first frame of the current Node. These
+frames are then packaged into a new branch, which is pushed onto the current Stack and processed
+by extend. When the list of goals is empty, the second clause unifies Ans with Call and
+begins processing the next frame in the current Node, minus the calling goal. Finally, if the list
+of unprocessed frames is empty, the first clause writes out the answer and calls extend
+to process the stack again''~\cite{McCartyS94}.
+
+The above lines do not explain in detail the previous listing, like we did in
+Section~\ref{sec:eii}, but they should give to the reader a good overview of how this
+interpreter works.
