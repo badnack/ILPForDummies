@@ -122,6 +122,7 @@ Where R is the rulebase.
 
 Therefore:
 \begin{equation}
+  \label{add_fact}
   R \vdash \phi \iff R \cup \{worked\_on(Phil, Icarus)\} \vdash wall\_of\_fame(Phil)
 \end{equation}
 Which informally means: ``the expression $\phi$ is true in the rulebase R if and only if
@@ -141,8 +142,19 @@ he worked on a project which made him appear on the wall of fame''. This
 hypothetical rule can be expressed in the following way:
 
 \begin{equation}
-  promotion(e) \leftarrow \exists p [wall\_of\_fame(e) \leftarrow worked\_on(e, p)]
+  \label{add_rule}
+  promotion(Marcus) \leftarrow (wall\_of\_fame(Marcus) \leftarrow worked\_on(Marcus, Andromeda))
 \end{equation}
+
+According the above hypothetical rule, Marcus would be eligible for a promotion
+if adding the fact $worked\_on(Marcus, Andromeda)$ would cause $wall\_of\_fame(Marcus)$
+to be true. 
+
+As will be stated in Section~\ref{sec:ilp}, in order to implement hypothetical reasoning
+the rulebase is temporarily modified, by adding a certain fact, such as $worked_on(Phil, Icarus)$ 
+in example~\ref{add_fact} and $worked\_on(Marcus, Andromeda)$ in example~\ref{add_rule}).
+
+For a deeper study of hypothetical rules and their semantic please refer to Appendix~\ref{app:hyr}.
 
 \subsection{A logic for hypothetical reasoning}
 \label{sec:alfhr}

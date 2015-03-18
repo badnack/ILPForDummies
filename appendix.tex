@@ -38,4 +38,43 @@
   as well as a model-theoretic approach.
   There is not a ``right'' or ``wrong'' approach: according on what properties we want to prove
   an approach may merely be more complex and difficult to use than the other.
+
+  \section{Hypothetical rules}
+  \label{app:hyr}
+  As discussed in Section~\ref{sec:formalization}, hypothetical rules can be defined
+  using the form:
+  \begin{equation}
+    A \leftarrow (B \leftarrow C)
+  \end{equation}
+  Which informally means: ``A is true if adding C to the rulebase would cause B to be true''.
+  For completeness, a couple of considerations have to be made.
+  In the same section we have provided a simple example where A, B and C were closed formulae
+  (i.e., formulae with values filled in like $worked\_on(Marcus, Andromeda)$). This
+  is not the only way to express hypothetical rules.
+  In fact, as studied by Bonner in~\cite{Bonner88alogic} we can also express
+  hypothetical rules using free variables, such as:
+  \begin{equation}
+    promotion(e) \leftarrow \exists p [wall\_of\_fame(e) \leftarrow worked\_on(e, p)]
+  \end{equation}
+  Which informally means: ``if we can find a person and a project such that the
+  predicate $wall\_of\_fame$ applied on such a person is true, then such a person
+  is eligible for a promotion''. The resolution procedure is the same as the one expressed
+  in Section~\ref{sec:formalization}. Particularly, $worked\_on(e,p)$ is added
+  to the rulebase and a proof for the goal wall\_of\_fame(e) is searched.
+  If e and p are unified with some values such that wall\_of\_fame(e) becomes true, then
+  promotion(e) is proven to be true.
+
+  A second consideration involves nested hypothetical rules. The question arises naturally:
+  are rules like $A \leftarrow (B \leftarrow (C \leftarrow D)))$ allowed? What
+  is the semantic of such rules? Applying the same reasoning carried out so far,
+  such a rule would informally mean ``A is true if, B is true if adding D to the rulebase
+  would cause C to be true'', which logically seems to be semantically equivalent to
+  $A \leftarrow (C \leftarrow D))$.
+
+  At the best of our knowledge noone in the literature provided an answer to this question.
+  Works such as~\cite{Bonner88alogic}~\cite{Gabbay1984319}
+  and~\cite{Bonner94hypotheticalreasoning} only treat hypothetical rules in the first
+  form, that is to say $A \leftarrow (B \leftarrow C)$. The personal idea of the author
+  of this work, as just stated, is that the semantic of a nested hypothetical rule
+  can be reduced to the contracted form $A \leftarrow (B \leftarrow C)$.
 \end{appendices}
