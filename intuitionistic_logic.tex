@@ -57,8 +57,10 @@ This means that in intuitionistic logic a statement (e.g., a proposition) to be 
 has to be formally proven.
 Classically (i.e. in classical logic) a value of truth (i.e,
 true or false) is assigned to each proposition, regardless of such a proposition
-has been proven or not. This is not the case in intuitionistic logic. This logic
-can be seen as a weak form of classical logic.
+has been proven or not. This is not the case in intuitionistic logic. Furthermore
+many classically valid tautologies are not theorems of intuitionistic logic (e.g.,
+law of excluded middle), but all theorems of intuitionistic logic are valid classically. 
+For this very reason intuitionistic logic can be seen as a weak form of classical logic.
 
 The syntax of intuitionistic logic is similar to the syntax of classical logic,
 even though, the meaning of some of its connectives is not classical.
@@ -73,14 +75,14 @@ there exists a demonstration which proves the inexistence of a demonstration of 
 Said this, if P is demonstrable it is impossible
 to prove that there not exist a demonstration of P (i.e.,  $P \to \lnot\lnot P$).
 
-Vice versa, if there is not any demonstrations that proofs that there is not any demonstrations of P,
+Vice versa, if no demonstrations that prove that ``there is not any demonstrations of P'' are available,
 it is not possible to conclude that a demonstration of P exists (i.e., $\lnot\lnot P \to  P$ is not
 valid).
 
 Another important example is represented by the material implication.
 Classically $P \to Q$ is equivalent to $\lnot P \lor Q$, whereas intuitionistically
-$\lnot P \lor Q$ only entails (i.e., logically ``follows from'') $P \to Q$.
-As we will see in~\ref{sec:formalization}, this is the reason why hypothetical reasoning
+$\lnot P \lor Q$ only entails (i.e., logically ``leads to'') $P \to Q$.
+Ashikaga we will see in~\ref{sec:formalization}, this is the reason why hypothetical reasoning
 cannot be formalized using classical logic.
 
 The semantic of intuitionistic logic is often studied relying on model-theory
@@ -109,7 +111,7 @@ can be represented by the following expression:
   \phi = wall\_of\_fame(Phil) \leftarrow worked\_on(Phil, Icarus)
 \end{equation}
 
-We have already said that the query is satisfied (i.e., returns True) if and only if by
+We have already said that the query is satisfied (i.e., returns True) if by
 adding the fact $worked\_on(Phil, Icarus)$ to the rulebase,  $wall\_of\_fame(Phil)$ could
 be inferred. Formally:
 
@@ -132,8 +134,8 @@ On the other hand, hypothetical rules can be formalized in the following way:
 \end{equation}
 which informally means: ``A is true if adding C to the rulebase would cause B to be true''.
 
-While hypothetical queries are immediate, hypothetical rules may be not. Let's see an example
-of them. Let's assume that the chief of the same software company
+While hypothetical queries are easier to imagine and to understand, hypothetical rules may be not. 
+Let's see an example of them. Let's assume that the chief of the same software company
 wants to enforce the following rule: ``an employee is eligible for a promotion if
 he worked on a project which made him appear on the wall of fame''. This
 hypothetical rule can be expressed in the following way:
