@@ -18,7 +18,7 @@ base, try to infer the query and eventually restore the rulebase to the original
 
 Let's consider again the example in Section~\ref{sec:formalization}. In order
 to give a response to the query we need to temporarily introduce the rule
-$worked\_on(Phil, Icarus)$ within the rulebase R, try to infer $wall\_of\_fame(Phil)$
+$worked\_on(phil, icarus)$ within the rulebase R, try to infer $wall\_of\_fame(phil)$
 and eventually remove the rule for the rulebase.
 
 This is exactly how hypothetical queries are validated in intuitionistic logic
@@ -33,11 +33,9 @@ The implementation of a Prolog interpreter for intuitionistic logic,
 has been studied by L. Thorne McCarty and Leon A. Shklar in~\cite{McCartyS94}.
 
 This work presents a ``syntactically restricted language'' (as they call it), which basically
-is a language which implements ``part'' of the intuitionistic logic.
-As they demonstrated in their work, this ``syntactically restricted language'' is
-expressively equivalent to the full language, though.
+means that they decomposed intuitionistic logic into two syntactically restricted subsets.
 
-Particularly, they decomposed intuitionistic logic into two restricted subsets:
+Particularly, they decomposed intuitionistic logic into the following restricted subsets:
 \begin{itemize}
   \item the class of embedded implications: that is to say a class of formulas as
     \begin{equation}
@@ -48,14 +46,14 @@ Particularly, they decomposed intuitionistic logic into two restricted subsets:
     (i.e., $\forall$). Note that here L. Thorne McCarty and Leon A. Shklar relaxed
     a little bit the definition of embedded implication. In fact, differently from
     what has been said in Section~\ref{sec:terms}, here embedded implications allow
-    other embedded implications in their body. Note that this definition is more 
+    other embedded implications in their body. Note that this definition is more
     general. In fact, as said in Section~\ref{sec:terms}, embedded implications
     include Horn clauses as special case.
 
   \item the class of disjunctive and existential assertions: that is to say a class
     of formulas like:
     \begin{equation}
-      B(x) \rightarrow \wedge^{n}_{i=1} Q_i(x)\ and\ B(x) \rightarrow (\exists y) \wedge^m_{j=1}Q_j(x;y)
+      B(x) \rightarrow \lor^{n}_{i=1} Q_i(x)\ and\ B(x) \rightarrow (\exists y) \wedge^m_{j=1}Q_j(x,y)
     \end{equation}
     Where the x variables are universally quantified and no x variables are allowed
     on the right-hand side which do not appear in B(x). Each Q is an atomic formula.
@@ -67,41 +65,53 @@ and Shklar:
   \item $R \vdash A$
     \begin{equation}
       \begin{split}
-        &if\ there\ is\ a\ rule\ B(x) \leftarrow \wedge^{n}_{i=1} A_i(x)\ in\ R\ and\ a\ ground\ substitution\ \theta\ for\ x:\\
+        &if\ there\ is\ a\ rule\ B(x) \leftarrow \wedge^{n}_{i=1} A_i(x)\ in\ R\ and\ a\ ground\ substitution\ \theta\\
+        &for\ x\ such\ that:\\
         &A=B(x)\theta\ and\ R \vdash A_i(x)\theta,\ for\ i = 1...n
       \end{split}
     \end{equation}
-
+    This rule means that if there is a ground substitution $\theta$ (please see Section~\ref{sec:terms}) for B(x) such
+    that $A=B(x)\theta$, where $B(x) \leftarrow \wedge^{n}_{i=1} A_i(x)$, and every ground substitution of $\theta$ in $A_i$ 
+    is proven in R, then A is proven in R.
     \item $R \vdash A \leftarrow \wedge^{n}_{i=1} Q_i(x)$
       \begin{equation}
         if\ R \cup^n_{i=1}\{Q_i(x)\} \vdash A
       \end{equation}
-
+      This rule merely is a generalization of what has be already said in Section~\ref{sec:formalization}.
+      In this case instead of a single atomic formula, we are considering a finite sequence of them, which they
+      all must to be satisfied in R in order to satisfy A in R.
+      
     \item $R \vdash (\forall y) A(y)$
       \begin{equation}
-      \begin{split}
-        &if\ R \vdash A(c)\ for\ some\ tuple\ of\ constants\ c=\langle c_1,c_2,...,c_k\rangle\ that\\
-        &do\ not\ appear\ in\ R\ or A(y)
-      \end{split}
-    \end{equation}
+        \begin{split}
+          &if\ R \vdash A(c)\ for\ some\ tuple\ of\ constants\ c=\langle c_1,c_2,...,c_k\rangle\ that\\
+          &do\ not\ appear\ in\ R\ or A(y)
+        \end{split}
+      \end{equation}
+      The intuitive meaning of this rule is the following: if $R \vdash A(c)$, where c is a 
+      fresh new constant never used or seen before, it means that A(c) is always valid in
+      R. It follows: $R \vdash (\forall y) A(y)$.
+
+    \item $R \vdash A$
+      \begin{equation}
+        \begin{split}
+          &if\ there\ is\ a\ rule\ B(x) \rightarrow \vee^n_{i=1}Q_i(x)\ in\ R\ and\ a\ ground\ substitution\ \theta\ for x:\\
+          &R \vdash B(x)\theta\ and\\ 
+          &\ \ \ \ \ \ \ \ \ \ \ R \cup \{Q_i(x)\theta\}\vdash A,\ for\ i=1,...,n
+        \end{split}
+      \end{equation}
+      This rule merely combines rule I with rule II.
 
     \item $R \vdash A$
       \begin{equation}
       \begin{split}
-        &if\ there\ is\ a\ rule\ B(x) \rightarrow \vee^n_{i=1}Q_i(x)\ in\ R\ and\ a\ ground\ substitution\ \theta\ for x:\\
-        &R \vdash B(x)\theta\ and\ R \cup \{Q_i(x)\theta\}\vdash A,\ for\ i=1,...,n
+        &if\ there\ is\ a\ rule\ B(x) \rightarrow (\exists y)\wedge^m_{j=1}Q_j(x,y)\ in\ R\ and\ a\ ground\ substitution\ \theta\ \\
+        &for\ x\ such\ that\ R\ \vdash B(x)\theta\ and\\
+        &\ \ \ \ \ \ \ \ \ \ \ R \cup (\cup^m_{j=1}\{Q_j(x,c)\theta\})\vdash\ A\\
+        &for\ some\ tuple\ of\ constants\ c=\langle c_1,c_2,...,c_k \rangle\ that\ \ do\ not\ appear\ in\ R\ or\ A
       \end{split}
     \end{equation}
-
-    \item $R \vdash A$
-      \begin{equation}
-      \begin{split}
-        &if\ there\ is\ a\ rule\ B(x) \rightarrow (\exists y)\wedge^m_{j=1}Q_j(x;y)\ in\ R\ and\ a\ ground\ substitution\ \theta\ \\
-        &for\ x\ such\ that\ R\ \vdash B(x)\theta\ and:\\
-        &R \cup (\cup^m_{j=1}\{Q_j(x;c)\theta\})\vdash A for\ some\ tuple\ of\ constants\ c\ \langle c_1,c_2,...,c_k \rangle\ that\ \ do\\
-        &not\ appear\ in\ R\ or\ A
-      \end{split}
-    \end{equation}
+      This rule merely is rule IV with the introduction of the existential quantification. 
 \end{enumerate}
 
 Note that these rules are not different from those presented in Section~\ref{sec:rfhi}
@@ -135,7 +145,7 @@ The interpreter for embedded implications is reported in the listing below.
       !,prove1(Goal,NewHypDB,Vars1,N1).
   prove1(Goal,HypDB,Vars,_) :- member(Goal,HypDB),\+violation(Vars).
   prove1(Goal,HypDB,Vars,N) :- clause(Goal,Body),\+violation(Vars),
-  prove1(Body,HypDB,Vars,N).
+      prove1(Body,HypDB,Vars,N).
 \end{lstlisting}
 
 The interpreter is not so easy as one may hope. In this document a simple

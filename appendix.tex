@@ -10,18 +10,18 @@
   mathematical objects, so to apply mathematical techniques in
   order to study them and to derive new conclusions.
 
-  In a logic context, a proof can be seen as a program (as stated by~\cite{PropAsTypes}).
+  In a programming logic context, a proof can be seen as a program (as stated by~\cite{PropAsTypes}).
   This relationship is known as Curry-Howard correspondence. Since there exists
   such a direct relationship between logic programs and proofs, it is
   natural that proof theory can be employed to model and study a logic programming
-  language. Specifically, in a logic as programming language perspective,
+  language. Specifically, in this context,
   proof-theory is used to define the rules of execution and how they work.
 
   Summarizing, we can say that a proof-theoretic approach shows in details how certain
   properties of a system are satisfied.
 
   Another way to model and study the meaning (i.e., the semantic) of a logic is through model
-  theory. As briefly mentioned in this very write up, the intuitionistic semantic can be
+  theory. As briefly mentioned in this very document, the intuitionistic semantic can be
   modeled by using the Kripke model. A mathematical model merely is the description of
   a system using mathematical concepts and language. This means that logics
   (as for example intuitionistic logic) can be studied by formalizing them as
@@ -48,15 +48,15 @@
   \end{equation}
   Which informally means: ``A is true if adding C to the rulebase would cause B to be true''.
   For completeness, a couple of considerations have to be made.
-  In the same section we have provided a simple example where A, B and C were closed formulae
-  (i.e., formulae with values filled in like $worked\_on(Marcus, Andromeda)$). This
+  In literature we can usually find example where A, B and C are closed formulae
+  (i.e., formulae with values filled in like $worked\_on(marcus, andromeda)$). This
   is not the only way to express hypothetical rules.
   In fact, as studied by Bonner in~\cite{Bonner88alogic} we can also express
   hypothetical rules using free variables, such as:
   \begin{equation}
     promotion(e) \leftarrow \exists p [wall\_of\_fame(e) \leftarrow worked\_on(e, p)]
   \end{equation}
-  Which informally means: ``if we can find a person and a project such that the
+  Which informally means: ``if we can find a person and a project he worked on such that the
   predicate $wall\_of\_fame$ applied on such a person is true, then such a person
   is eligible for a promotion''. The resolution procedure is the same as the one expressed
   in Section~\ref{sec:formalization}. Particularly, $worked\_on(e,p)$ is added

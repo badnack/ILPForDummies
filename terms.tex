@@ -14,6 +14,13 @@ their explanations.
     any free variables. For example, the fact ``Ada is John's mother'' can be formally expressed
     by: $mother(Ada, John)$. In this case $mother$ is a predicate and Ada and John are its two
     arguments.
+  \item Term: in logic a term denotes a mathematical object. Terms, which
+    are defined as variables and functions over other terms, merely are names for objects 
+    in some unknown domain.     
+    They do not have any ``meaning'' until an interpretation is given to them, which will provide a 
+    specific domain of objects. Different interpretations may lead to different domains.
+    An example of term is $x$ as well as $f(x, g(a, b))$. 
+  \item Ground term: a term which does not contain any variables.
   \item Rule: Expression that becomes true if the premise expression is true.
   \item Rulebase: collection of fact and rules.
   \item Horn clause: expression of the form $B \leftarrow B_1,B_2,...,B_k$ where $k \in \mathbb{I}$ and
@@ -22,6 +29,10 @@ their explanations.
     where $k \in \mathbb{I}$, B is atomic and each $\phi_i$ is a Horn clause.
     Note that embedded implications include Horn clauses as a special case, and Horn
     clauses include atomic formulas as a special case.
+  \item Substitution: replacing variables of an expression with other expressions.
+  \item Domain of substitution: Set of variables replaced in a substitution.
+  \item Ground substitution: a substitution is defined ground if it maps all variables 
+    of its domain to ground terms. 
   \item Logic Semantic: study of the meaning of a formal logic. That is to say the study
     of the meaning of the logical connectives, how formulas can be combined to infer new formulas,
     how formulas are constructed and how they are related.

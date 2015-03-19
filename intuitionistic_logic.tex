@@ -4,7 +4,7 @@ In literature there are several works that explore the advantages and the potent
 to express hypothetical reasoning in formal logic.
 For example, Gabbay in~\cite{Gabbay1984319} stated that if Prolog
 were augmented with hypothetical reasoning,
-it was possible to formally express the British
+it would be possible to formally express the British
 Nationality Act (rules such as
 ``You are eligible for citizenship if your father would be eligible if he were
 still alive'' are present).
@@ -59,7 +59,7 @@ Classically (i.e. in classical logic) a value of truth (i.e,
 true or false) is assigned to each proposition, regardless of such a proposition
 has been proven or not. This is not the case in intuitionistic logic. Furthermore
 many classically valid tautologies are not theorems of intuitionistic logic (e.g.,
-law of excluded middle), but all theorems of intuitionistic logic are valid classically. 
+law of excluded middle), but all theorems of intuitionistic logic are valid classically.
 For this very reason intuitionistic logic can be seen as a weak form of classical logic.
 
 The syntax of intuitionistic logic is similar to the syntax of classical logic,
@@ -70,10 +70,10 @@ In classical logic we know that $P \to \lnot\lnot P$ and $\lnot\lnot P \to  P$, 
 is a proposition. In intuitionistic logic only the first axiom is valid.
 
 This is merely because the notion of ``negation'' in intuitionistic logic is not classical.
-While classically $\lnot P$ means that P is False, Intuitionistically $\lnot P$ means that 
-there exists a demonstration which proves the inexistence of a demonstration of P. 
+While classically $\lnot P$ means that P is False, Intuitionistically $\lnot P$ means that
+there exists a demonstration which proves the inexistence of a demonstration of P.
 Said this, if P is demonstrable it is impossible
-to prove that there not exist a demonstration of P (i.e.,  $P \to \lnot\lnot P$).
+to prove that there is not exist a demonstration of P (i.e.,  $P \to \lnot\lnot P$).
 
 Vice versa, if no demonstrations that prove that ``there is not any demonstrations of P'' are available,
 it is not possible to conclude that a demonstration of P exists (i.e., $\lnot\lnot P \to  P$ is not
@@ -82,7 +82,7 @@ valid).
 Another important example is represented by the material implication.
 Classically $P \to Q$ is equivalent to $\lnot P \lor Q$, whereas intuitionistically
 $\lnot P \lor Q$ only entails (i.e., logically ``leads to'') $P \to Q$.
-Ashikaga we will see in~\ref{sec:formalization}, this is the reason why hypothetical reasoning
+As we will see in~\ref{sec:formalization}, this is the reason why hypothetical reasoning
 cannot be formalized using classical logic.
 
 The semantic of intuitionistic logic is often studied relying on model-theory
@@ -97,7 +97,6 @@ Intuitionistic logic is helpful because it is practical. In simple words, if the
 a proof that an object exists, such a proof can be used to build up an algorithm to
 generate an instance of such an object.
 
-
 \section{Formalization}
 \label{sec:formalization}
 Let's now see how to formalize hypothetical queries and hypothetical rules.
@@ -108,25 +107,25 @@ In that example we asked the following question (or query): ``Would Phil be elig
 be added on the wall of fame if he worked on Icarus?''. This query
 can be represented by the following expression:
 \begin{equation}
-  \phi = wall\_of\_fame(Phil) \leftarrow worked\_on(Phil, Icarus)
+  \phi = wall\_of\_fame(phil) \leftarrow worked\_on(phil, icarus)
 \end{equation}
 
 We have already said that the query is satisfied (i.e., returns True) if by
-adding the fact $worked\_on(Phil, Icarus)$ to the rulebase,  $wall\_of\_fame(Phil)$ could
+adding the fact $worked\_on(phil, icarus)$ to the rulebase,  $wall\_of\_fame(phil)$ could
 be inferred. Formally:
 
 \begin{equation}
-  R \cup \{worked\_on(Phil, Icarus)\} \vdash wall\_of\_fame(Phil)
+  R \cup \{worked\_on(phil, icarus)\} \vdash wall\_of\_fame(phil)
 \end{equation}
 Where R is the rulebase.
 
 Therefore:
 \begin{equation}
   \label{add_fact}
-  R \vdash \phi \iff R \cup \{worked\_on(Phil, Icarus)\} \vdash wall\_of\_fame(Phil)
+  R \vdash \phi\ if\   R \cup \{worked\_on(phil, icarus)\} \vdash wall\_of\_fame(phil)
 \end{equation}
-Which informally means: ``the expression $\phi$ is true in the rulebase R if and only if
-adding the fact $\{worked\_on(Phil, Icarus)\}$ among the facts in R, would cause wall\_of\_fame(Phil)
+Which informally means: ``the expression $\phi$ is true in the rulebase R if
+adding the fact $\{worked\_on(phil, icarus)\}$ among the facts in R, would cause wall\_of\_fame(phil)
 to be true''.
 
 On the other hand, hypothetical rules can be formalized in the following way:
@@ -135,7 +134,7 @@ On the other hand, hypothetical rules can be formalized in the following way:
 \end{equation}
 which informally means: ``A is true if adding C to the rulebase would cause B to be true''.
 
-While hypothetical queries are easier to imagine and to understand, hypothetical rules may be not. 
+While hypothetical queries are easier to imagine and to understand, hypothetical rules may be not.
 Let's see an example of them. Let's assume that the chief of the same software company
 wants to enforce the following rule: ``an employee is eligible for a promotion if
 he worked on a project which made him appear on the wall of fame''. This
@@ -143,18 +142,16 @@ hypothetical rule can be expressed in the following way:
 
 \begin{equation}
   \label{add_rule}
-  promotion(Marcus) \leftarrow (wall\_of\_fame(Marcus) \leftarrow worked\_on(Marcus, Andromeda))
+  promotion(e) \leftarrow \exists p [wall\_of\_fame(e) \leftarrow worked\_on(e, p)]
 \end{equation}
 
-According the above hypothetical rule, Marcus would be eligible for a promotion
-if adding the fact $worked\_on(Marcus, Andromeda)$ would cause $wall\_of\_fame(Marcus)$
-to be true. 
+For a deeper study of hypothetical rules and their semantic please refer to Appendix~\ref{app:hyr}.
 
 As will be stated in Section~\ref{sec:ilp}, in order to implement hypothetical reasoning
-the rulebase is temporarily modified, by adding a certain fact, such as $worked_on(Phil, Icarus)$ 
-in example~\ref{add_fact} and $worked\_on(Marcus, Andromeda)$ in example~\ref{add_rule}).
-
-For a deeper study of hypothetical rules and their semantic please refer to Appendix~\ref{app:hyr}.
+the rulebase is temporarily modified, by adding a certain fact, such as $worked\_on(phil, icarus)$
+in example~\ref{add_fact} and $worked\_on(marcus, andromeda)$ in example~\ref{add_rule}.
+Once the research is completed and the goal is satisfied (or not) the
+fact is removed from the rulebase, restoring it with its original content.
 
 \subsection{A logic for hypothetical reasoning}
 \label{sec:alfhr}
@@ -175,7 +172,7 @@ to the rulebase R, would B be true?''. To represent this query we need to constr
 an expression $\phi$ such that:
 
 \begin{equation}
-  R \vdash \phi \iff R \cup \{A_1\} \vdash B\ or\ R \cup \{A_2\} \vdash B
+  R \vdash \phi\ if\ R \cup \{A_1\} \vdash B\ or\ R \cup \{A_2\} \vdash B
 \end{equation}
 
 Such logic expression is $\phi = (B \leftarrow A_1) \lor (B \leftarrow A_2)$.
@@ -220,4 +217,14 @@ are horn clauses, then:
 
 
 As mentioned in Section~\ref{sec:alfhr}, these rules have been shown in~\cite{Bonner88alogic}
-to have an intuitionistic semantics, that is to say they ``have sense'' in intuitionistic logic.
+to have an intuitionistic semantics, that is to say they ``make sense'' in intuitionistic logic.
+
+Finally, a consideration about hypothetical reasoning and pure classic logic programming
+(LP) has to be made. Note that in order to implement hypothetical reasoning the rulebase
+has to be modified. Particularly, as it has been said in Section~\ref{sec:formalization} and Section~\ref{sec:ilp},
+a rulebase is modified twice: when a fact is added
+in order to infer a goal, and when the fact is removed in order to restore the content of the rulebase.
+This act of modifying a rulebase is not allowed in pure, classical LP. Nonetheless, there exits
+several projects which by implementing extralogical (i.e., relying on ``something'' that
+is semantically outside the logic that is been employed)
+extensions of LP, allow to express hypothetical reasoning.
